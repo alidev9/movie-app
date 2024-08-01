@@ -58,7 +58,12 @@ Week <?php echo $week_no?>
           $current_movie->poster_path
       );
   }
-  echo json_encode($catalogue_item_array);
+  foreach($catalogue_item_array as $movie){
+    ?>
+    <img src="<?= 'https://image.tmdb.org/t/p/w154' . $movie->poster_path ?>" alt="<?= $movie->original_title ?>"
+    class='movie-poster'>
+    <?php
+  }
 }
 
 requestCurrentMonthReleases(2024, $current_month);
