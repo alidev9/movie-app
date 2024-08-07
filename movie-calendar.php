@@ -1,6 +1,9 @@
 <?php
 require_once('vendor/autoload.php');
 
+header('Access-Control-Allow-Origin: *');
+header('Content-Type: application/json');
+
 $client = new \GuzzleHttp\Client();
 $tmdb_k = getenv('TMDB_K');
 
@@ -36,9 +39,7 @@ class WeekReleases{
   }
 }
 
-$current_month = date('m');
-
-function requestMonthReleases($year, $month){
+function requestMonthReleases($month, $year){
   $last_day_of_month = new DateTime("$year-$month-01");
   $last_day_of_month = $last_day_of_month->modify('last day of this month')->format('d');
 
@@ -87,3 +88,5 @@ function requestWeekReleases($first_day, $last_day){
   }
   return $movie_list;
 }
+
+requestMonthReleases($_GET['month'], $_GET['year']);

@@ -1,5 +1,4 @@
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     entry: './src/index.js',
@@ -22,12 +21,7 @@ module.exports = {
     resolve: {
         extensions: ['.js', '.jsx'],
     },
-    //Generate an HTML file within which the bundled JS is loaded from
-    plugins: [
-        new HtmlWebpackPlugin({
-            template: './dist/index.html',
-        }),
-    ],
+    devtool: 'source-map',
     devServer: {
         //serve static files in the 'public' directory from the path /assets/
         static: {
@@ -35,6 +29,6 @@ module.exports = {
             publicPath: '/assets'
         },
         compress: true,
-        port: 8080,
+        port: 9000,
     },
 };
