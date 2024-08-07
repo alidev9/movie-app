@@ -24,6 +24,17 @@ function App () {
     const [monthData, setMonthData] = useState()
     const [loading, setLoading] = useState(true)
     const [selectedMonth, setSelectedMonth] = useState(monthArray[currentMonthIndex])
+
+    function handleSearch(e){
+        const selectedMonth = document.querySelector('#month-select').value
+        const selectedYear = document.querySelector('#year-select').value
+        fetchMonthReleases(selectedMonth, selectedYear).then(result => {
+            setLoading(true)
+            setMonthData(result)
+            setLoading(false)
+            setSelectedMonth(monthArray[+selectedMonth - 1])
+        })
+    }
     
     useEffect(() => {
         fetchMonthReleases(convertMonthIntToStr(currentMonthIndex + 1), currentYear.toString())
@@ -33,13 +44,6 @@ function App () {
             })
     }, [])
 
-    function handleYearChange(e){
-
-    }
-    function handleMonthChange(e){
-
-    }
-
     if(loading){
         return <span>Loading...</span>
     } else {
@@ -48,20 +52,20 @@ function App () {
                 <div className='filters'>
                             <label htmlFor="year-select">Year:</label>
                             <select name="year" id="year-select">
-                                <option value={currentYear} selected onClick={handleYearChange}>{currentYear}</option>
-                                <option value={currentYear + 1} onClick={handleYearChange}>{currentYear + 1}</option>
-                                <option value={currentYear + 2} onClick={handleYearChange}>{currentYear + 2}</option>
+                                <option value={currentYear} selected >{currentYear}</option>
+                                <option value={currentYear + 1} >{currentYear + 1}</option>
+                                <option value={currentYear + 2} >{currentYear + 2}</option>
                             </select>
                             <label htmlFor="month-select">Month:</label>
                             <select name="month" id="month-select">
                                 {monthArray.map((month, index) => {
                                         return(
                                             <option value={convertMonthIntToStr(index + 1)} 
-                                                selected={index === currentMonthIndex}
-                                                onClick={handleMonthChange}>{month}</option>
+                                                selected={index === currentMonthIndex} >{month}</option>
                                         )
                                 })}
                             </select>
+                            <button onClick={handleSearch}>Search</button>
                 </div>
                 {monthData.week_releases.map((week) => {
                     return (
