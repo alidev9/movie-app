@@ -17,6 +17,7 @@ async function fetchMonthReleases(month, year) {
 
 async function fetchMovieDetails(movieID){
     const response = await fetch(`http://localhost:8080/movie-details.php?movie_id=${movieID}`)
+    console.log(response)
     const result = await response.json()
     return result
 }
@@ -46,6 +47,8 @@ function App () {
     function displayMovieDetails(e){
         fetchMovieDetails(e.currentTarget.id).then(result => {
             setSelectedMovie(result)
+        }).catch((error) => {
+            console.log(error.toString())
         })
     }
     

@@ -1,10 +1,11 @@
 <?php
 require_once('vendor/autoload.php');
 
+header('Content-Type: application/json');
+
 $client = new \GuzzleHttp\Client();
 $tmdb_k = getenv('TMDB_K');
 $movie_id = $_GET['movie_id'];
-printf($movie_id);
 
 $response = $client->request('GET', "https://api.themoviedb.org/3/movie/$movie_id?language=en-US", [
     'headers' => [
@@ -26,7 +27,5 @@ $movie_details->backdrop_path = $response_object->backdrop_path;
 $movie_details->overview = $response_object->overview;
 $movie_details->release_date = $response_object->release_date;
 $movie_details->genres = $response_object->genres;
-
-error_log(json_encode($movie_details));
 
 echo json_encode($movie_details);
