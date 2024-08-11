@@ -1,9 +1,6 @@
 <?php
 require_once('vendor/autoload.php');
 
-header('Access-Control-Allow-Origin: *');
-header('Content-Type: application/json');
-
 $client = new \GuzzleHttp\Client();
 $tmdb_k = getenv('TMDB_K');
 
