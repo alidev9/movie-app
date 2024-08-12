@@ -66,9 +66,8 @@ function App () {
             const movieGridPosition = +selectedMovieElement.dataset.gridPosition + 1
             //Determining where to place movieDetails
             const gridRow = +movieGridPosition%2 === 0 ? +movieGridPosition/2 : (+movieGridPosition+1)/2
-            console.log(gridRow)
             const movieDetailsContainer = document.querySelector('.movie-details')
-            movieDetailsContainer.style.gridRow = `${gridRow + 1} / ${+gridRow + 2}`   
+            movieDetailsContainer.style.gridRow = `${gridRow + 2} / ${+gridRow + 3}`   
         }
     }, [selectedMovie])
 
@@ -99,15 +98,15 @@ function App () {
                     {monthData.week_releases.map((week) => {
                         return (
                             <>
-                                <h2>{selectedMonth} {week.week_range[0] + ' - '+ week.week_range[1]}</h2>
                                 <div className="movie-group-container">
+                                    <h2>{selectedMonth} {week.week_range[0] + ' - '+ week.week_range[1]}</h2>
                                     {week.movie_list.map((movie, index) => {
                                         return(
                                             <>
                                                 <div key={movie.id} id={movie.id} data-grid-position={index}className='movie-poster-container' onClick={displayMovieDetails}>
                                                     <img src={`https://image.tmdb.org/t/p/w154/${movie.poster_path}`}
                                                     alt={movie.original_title + ' Poster'} />
-                                                    <div>{movie.original_title}</div>
+                                                    <div className='movie-poster-title'>{movie.original_title}</div>
                                                 </div>
                                                 {selectedMovie.id === movie.id && <MovieDetails selectedMovie={selectedMovie}/>}
                                             </>
