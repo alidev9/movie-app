@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import MovieDetails from './MovieDetails'
 
 
 function convertMonthIntToStr(monthInt){
@@ -10,14 +11,13 @@ function convertMonthIntToStr(monthInt){
 }
 
 async function fetchMonthReleases(month, year) {
-    const response = await fetch(`http://localhost:8080/movie-calendar.php?month=${month}&year=${year}`)
+    const response = await fetch(`http://localhost:8080/movie-list?month=${month}&year=${year}`)
     const result = await response.json()
     return result
 }
 
 async function fetchMovieDetails(movieID){
-    const response = await fetch(`http://localhost:8080/movie-details.php?movie_id=${movieID}`)
-    console.log(response)
+    const response = await fetch(`http://localhost:8080/movie-details?movie_id=${movieID}`)
     const result = await response.json()
     return result
 }
@@ -42,13 +42,13 @@ function App () {
             setMonthData(result)
             setLoading(false)
             setSelectedMonth(monthArray[+selectedMonth - 1])
+        }).catch((error) => {
+            console.log(error.toString())
         })
     }
     function displayMovieDetails(e){
         fetchMovieDetails(e.currentTarget.id).then(result => {
             setSelectedMovie(result)
-        }).catch((error) => {
-            console.log(error.toString())
         })
     }
     
@@ -59,6 +59,18 @@ function App () {
                 setLoading(false)
             })
     }, [])
+
+    useEffect(() => {
+        if(selectedMovie.id){
+            const selectedMovieElement = document.getElementById(`${selectedMovie.id}`)
+            const movieGridPosition = +selectedMovieElement.dataset.gridPosition + 1
+            //Determining where to place movieDetails
+            const gridRow = +movieGridPosition%2 === 0 ? +movieGridPosition/2 : (+movieGridPosition+1)/2
+            console.log(gridRow)
+            const movieDetailsContainer = document.querySelector('.movie-details')
+            movieDetailsContainer.style.gridRow = `${gridRow + 1} / ${+gridRow + 2}`   
+        }
+    }, [selectedMovie])
 
     if(loading){
         return <span>Loading...</span>
@@ -83,30 +95,29 @@ function App () {
                             </select>
                             <button onClick={handleSearch}>Search</button>
                 </div>
-                {monthData.week_releases.map((week) => {
-                    return (
-                        <>
-                            <h2>{selectedMonth} {week.week_range[0] + ' - '+ week.week_range[1]}</h2>
-                            {week.movie_list.map((movie) => {
-                                return(
-                                    <div key={movie.id} id={movie.id} onClick={displayMovieDetails}>
-                                        <img src={`https://image.tmdb.org/t/p/w154/${movie.poster_path}`} 
-                                        alt={movie.original_title + ' Poster'} />
-                                        {selectedMovie.id === movie.id && 
-                                            <div className='movie-details'>
-                                                <img className="backdrop" src={`http://image.tmdb.org/t/p/w300/${selectedMovie.backdrop_path}`} alt="" />
-                                                <h3 className='original-title'>{selectedMovie.original_title}</h3>
-                                                <div className='tagline'>{selectedMovie.tagline}</div>
-                                                <p className='overview'>{selectedMovie.overview}</p>
-                                                <div className="release-date">{selectedMovie.release_date}</div>
-                                                <div className="genres">{selectedMovie.genres.map(genre => genre.name)}</div>
-                                            </div>}
-                                    </div>
-                                )
-                            })}
-                        </>
-                    )
-                })}
+                <div className="movie-list-container">
+                    {monthData.week_releases.map((week) => {
+                        return (
+                            <>
+                                <h2>{selectedMonth} {week.week_range[0] + ' - '+ week.week_range[1]}</h2>
+                                <div className="movie-group-container">
+                                    {week.movie_list.map((movie, index) => {
+                                        return(
+                                            <>
+                                                <div key={movie.id} id={movie.id} data-grid-position={index}className='movie-poster-container' onClick={displayMovieDetails}>
+                                                    <img src={`https://image.tmdb.org/t/p/w154/${movie.poster_path}`}
+                                                    alt={movie.original_title + ' Poster'} />
+                                                    <div>{movie.original_title}</div>
+                                                </div>
+                                                {selectedMovie.id === movie.id && <MovieDetails selectedMovie={selectedMovie}/>}
+                                            </>
+                                        )
+                                    })}
+                                </div>                            
+                            </>
+                        )
+                    })}
+                </div>
             </>
         )
     }

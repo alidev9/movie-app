@@ -1,5 +1,7 @@
 <?php
 require_once('vendor/autoload.php');
+//Temporary, for styling pages
+header("Access-Control-Allow-Origin: http://127.0.0.1:5500");
 
 $client = new \GuzzleHttp\Client();
 $tmdb_k = getenv('TMDB_K');
