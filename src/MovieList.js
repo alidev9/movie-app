@@ -33,6 +33,7 @@ function App () {
     const [loading, setLoading] = useState(true)
     const [selectedMonth, setSelectedMonth] = useState(monthArray[currentMonthIndex])
     const [selectedMovie, setSelectedMovie] = useState({})
+    const [movieDetailsHidden, setMovieDetailsHidden] = useState(true)
 
     function handleSearch(e){
         const selectedMonth = document.querySelector('#month-select').value
@@ -47,9 +48,15 @@ function App () {
         })
     }
     function displayMovieDetails(e){
-        fetchMovieDetails(e.currentTarget.id).then(result => {
-            setSelectedMovie(result)
-        })
+        const movieDetailsElement = document.querySelector('.movie-details')
+        if(movieDetailsElement && movieDetailsElement.dataset.movieId === e.currentTarget.id){
+            setMovieDetailsHidden(true)
+        } else {
+            fetchMovieDetails(e.currentTarget.id).then(result => {
+                setMovieDetailsHidden(false)
+                setSelectedMovie(result)
+            })
+        }
     }
     
     useEffect(() => {
@@ -61,7 +68,7 @@ function App () {
     }, [])
 
     useEffect(() => {
-        if(selectedMovie.id){
+        if(selectedMovie.id && !movieDetailsHidden){
             const selectedMovieElement = document.getElementById(`${selectedMovie.id}`)
             const movieGridPosition = +selectedMovieElement.dataset.gridPosition + 1
             //Determining where to place movieDetails
@@ -108,7 +115,7 @@ function App () {
                                                     alt={movie.original_title + ' Poster'} />
                                                     <div className='movie-poster-title'>{movie.original_title}</div>
                                                 </div>
-                                                {selectedMovie.id === movie.id && <MovieDetails selectedMovie={selectedMovie}/>}
+                                                {selectedMovie.id === movie.id && !movieDetailsHidden && <MovieDetails selectedMovie={selectedMovie}/>}
                                             </>
                                         )
                                     })}

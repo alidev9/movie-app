@@ -39,7 +39,7 @@ h2, p{
 }
 
 /*TODO, still doesn't work*/
-h2:not(:first-of-type){
+.movie-group-container:not(:first-child) h2{
     margin-top: 24px;
 }
 

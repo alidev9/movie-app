@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 
 function MovieDetails({selectedMovie}){
     return(
-        <div className='movie-details'>
+        <div className='movie-details' data-movie-id={selectedMovie.id}>
                     <img className="movie-backdrop" src={`http://image.tmdb.org/t/p/w780/${selectedMovie.backdrop_path}`} alt="" />
                     <h3 className='movie-original-title'>{selectedMovie.original_title}</h3>
                     <div className='movie-tagline'>{selectedMovie.tagline}</div>
