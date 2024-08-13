@@ -3,7 +3,7 @@
 $request_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 switch($request_path){
     case '/':
-        include 'dist/index.html';
+        include 'view-dist/index.html';
         break;
     case '/movie-list':
         include 'movie-calendar/movie-list.php';

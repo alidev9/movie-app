@@ -1,9 +1,9 @@
 const path = require('path');
 
 module.exports = {
-    entry: './src/index.js',
+    entry: './view-src/index.js',
     output: {
-        path: path.resolve(__dirname, 'dist'),
+        path: path.resolve(__dirname, 'view-dist'),
         filename: 'bundle.js',
     },
     //loading the babel transpiler on each JS/JSX file

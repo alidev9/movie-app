@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import MovieDetails from './MovieDetails'
-
+import MovieElement from './MovieElement'
 
 function convertMonthIntToStr(monthInt){
     if(monthInt < 10){
@@ -16,13 +15,7 @@ async function fetchMonthReleases(month, year) {
     return result
 }
 
-async function fetchMovieDetails(movieID){
-    const response = await fetch(`http://localhost:8080/movie-details?movie_id=${movieID}`)
-    const result = await response.json()
-    return result
-}
-
-function App () {
+function MovieList () {
 
     const currentYear = new Date().getFullYear()
     const currentMonthIndex = new Date().getMonth() //getMonth() is zero-indexed
@@ -33,9 +26,8 @@ function App () {
     const [loading, setLoading] = useState(true)
     const [selectedMonth, setSelectedMonth] = useState(monthArray[currentMonthIndex])
     const [selectedMovie, setSelectedMovie] = useState({})
-    const [movieDetailsHidden, setMovieDetailsHidden] = useState(true)
 
-    function handleSearch(e){
+    function handleSearch(){
         const selectedMonth = document.querySelector('#month-select').value
         const selectedYear = document.querySelector('#year-select').value
         fetchMonthReleases(selectedMonth, selectedYear).then(result => {
@@ -47,17 +39,6 @@ function App () {
             console.log(error.toString())
         })
     }
-    function displayMovieDetails(e){
-        const movieDetailsElement = document.querySelector('.movie-details')
-        if(movieDetailsElement && movieDetailsElement.dataset.movieId === e.currentTarget.id){
-            setMovieDetailsHidden(true)
-        } else {
-            fetchMovieDetails(e.currentTarget.id).then(result => {
-                setMovieDetailsHidden(false)
-                setSelectedMovie(result)
-            })
-        }
-    }
     
     useEffect(() => {
         fetchMonthReleases(convertMonthIntToStr(currentMonthIndex + 1), currentYear.toString())
@@ -66,17 +47,6 @@ function App () {
                 setLoading(false)
             })
     }, [])
-
-    useEffect(() => {
-        if(selectedMovie.id && !movieDetailsHidden){
-            const selectedMovieElement = document.getElementById(`${selectedMovie.id}`)
-            const movieGridPosition = +selectedMovieElement.dataset.gridPosition + 1
-            //Determining where to place movieDetails
-            const gridRow = +movieGridPosition%2 === 0 ? +movieGridPosition/2 : (+movieGridPosition+1)/2
-            const movieDetailsContainer = document.querySelector('.movie-details')
-            movieDetailsContainer.style.gridRow = `${gridRow + 2} / ${+gridRow + 3}`   
-        }
-    }, [selectedMovie])
 
     if(loading){
         return <span>Loading...</span>
@@ -102,31 +72,26 @@ function App () {
                             <button onClick={handleSearch}>Search</button>
                 </div>
                 <div className="movie-list-container">
-                    {monthData.week_releases.map((week) => {
-                        return (
-                            <>
-                                <div className="movie-group-container">
-                                    <h2>{selectedMonth} {week.week_range[0] + ' - '+ week.week_range[1]}</h2>
-                                    {week.movie_list.map((movie, index) => {
-                                        return(
-                                            <>
-                                                <div key={movie.id} id={movie.id} data-grid-position={index}className='movie-poster-container' onClick={displayMovieDetails}>
-                                                    <img src={`https://image.tmdb.org/t/p/w154/${movie.poster_path}`}
-                                                    alt={movie.original_title + ' Poster'} />
-                                                    <div className='movie-poster-title'>{movie.original_title}</div>
-                                                </div>
-                                                {selectedMovie.id === movie.id && !movieDetailsHidden && <MovieDetails selectedMovie={selectedMovie}/>}
-                                            </>
-                                        )
-                                    })}
-                                </div>                            
-                            </>
-                        )
-                    })}
+                    <div className="movie-list-inner-wrapper">
+                        {monthData.week_releases.map((week) => {
+                            return (
+                                <>
+                                    <div className="movie-group-container">
+                                        <h2>{selectedMonth} {week.week_range[0] + ' - '+ week.week_range[1]}</h2>
+                                        {week.movie_list.map((movie, index) => {
+                                            return (
+                                                <MovieElement movie={movie} index={index} selectedMovie={selectedMovie} setSelectedMovie={setSelectedMovie}/>
+                                            )
+                                        })}
+                                    </div>
+                                </>
+                            )
+                        })}
+                    </div>
                 </div>
             </>
         )
     }
 }
 
-export default App
+export default MovieList
